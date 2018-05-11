@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="cuobiezi&#39;s blog">
+  <meta name="keyword" content="cuobiezi&#39;s blog">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      antdMobile长列表结合redux做上拉加载 | 错别字
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <!-- <div class="logo"></div> -->
+      <span>错别字</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>antdMobile长列表结合redux做上拉加载</h2>
+  <p class="post-date">2018-05-11</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p><em>刚看完朋友介绍的《深入浅出的react》就接到一个微信商城的项目。有一个下拉加载的页面，而<a href="https://mobile.ant.design/components/list-view-cn/" target="_blank" rel="noopener">antd-mobile ListView</a>中的demo却没有结合redux。折腾了大概一个下午的时间，可算是把两者结合在一起了</em>。</p>
+<p><br>首先，我的项目中基本上所有的请求都是放在redux中的用redux-thunks写异步actions的。一开始急于求成，没有认真阅读ListView的dataSource属性，直接生搬硬套的把文档上的demo搬进去，后来发现不管我怎么改有问题。于是有静下心来把<a href="https://reactnative.cn/docs/0.26/listviewdatasource.html" target="_blank" rel="noopener">ListView.DataSource</a>大致阅读了一下，恍然大悟。闲话不多说，总之在我觉dataSource是整个ListView中最重要的一个属性吧。</p>
+<p><br>“<strong><code>ListViewDataSource</code>为<code>ListView</code>组件提供高性能的数据处理和访问。我们需要调用方法从原始输入数据中抽取数据来创建<code>ListViewDataSource</code>对象，并用其进行数据变更的比较。原始输入数据可以是简单的字符串数组，也可以是复杂嵌套的对象——分不同区(section)各自包含若干行(row)数据。要更新datasource中的数据，请（每次都重新）调用<code>cloneWithRows</code>方法（如果用到了section，则对应<code>cloneWithRowsAndSections</code>方法）。数据源中的数据本身是不可修改的，所以请勿直接尝试修改。clone方法会自动提取新数据并进行逐行对比（使用rowHasChanged方法中的策略），这样ListView就知道哪些行需要重新渲染了。在下面这个例子中，一个组件在分块接受数据，这些数据由<code>_onDataArrived</code>方法中处理——将新数据拼接（concat）到旧数据尾部，同时使用clone方法更新DataSource。我们使用concat方法来修改<code>this._data</code>以创建新数组，注意不能使用push方法拼接数组。实现<code>_rowHasChanged</code>方法需要透彻了解行数据的结构，以便提供高效的比对策略。</strong>”</p>
+<p><br>因为我的请求是放在redux中的，所有我的列表的数据是在actions中获取的，因此ListView的dataSource也应该从state获取数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;ListView&#125; <span class="keyword">from</span> <span class="string">'antd-mobile'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* redux的初始化state */</span></span><br><span class="line"><span class="keyword">const</span> initState = &#123;</span><br><span class="line">  dataSource:<span class="keyword">new</span> ListView.DataSource(&#123;</span><br><span class="line">    rowHasChanged: <span class="function">(<span class="params">row1, row2</span>) =&gt;</span> row1 !== row2,</span><br><span class="line">  &#125;),</span><br><span class="line">  List: []</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ListView的dataSource属性必须是一个ListView.DataSource对象，在reducer的相关文件中引入ListView组建用于创建dataSource，新建一个DataSource对象作为初始dataSource存储在state中，<em>initState.dataSource定义为DataSource对象是为了防止actions中请求获取数据的时候ListView渲染报错</em>。用state中的dataSource作ListView组建中的dataSource属性。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">genData</span>(<span class="params">pIndex =<span class="number">0</span>,NUM_ROWS</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> dataBlob = &#123;&#125;;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; NUM_ROWS; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> ii = (pIndex * NUM_ROWS) + i;</span><br><span class="line">    dataBlob[<span class="string">`<span class="subst">$&#123;ii&#125;</span>`</span>] = <span class="string">`row - <span class="subst">$&#123;ii&#125;</span>`</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dataBlob;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*actions*/</span> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> getList = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">async</span> (dispatch) =&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">           <span class="keyword">const</span> List = <span class="keyword">await</span> fetch(<span class="string">'api?page=0&amp;size=10'</span>); <span class="comment">/*获取第一页的10条数据*/</span></span><br><span class="line">           dispatch(initDataSource(List));</span><br><span class="line">        &#125;<span class="keyword">catch</span> (error)&#123;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> initDataSource = <span class="function">(<span class="params">List</span>) =&gt;</span> (&#123;</span><br><span class="line">    type:<span class="string">'INITDATASOURCE'</span>,</span><br><span class="line">    List</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">/*reducer*/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> reducer = <span class="function">(<span class="params">state = initState,action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span>(action.type)&#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'INITDATASOURCE'</span>:</span><br><span class="line">            <span class="keyword">return</span> &#123;</span><br><span class="line">                ...state,</span><br><span class="line">                List: action.List,</span><br><span class="line">              	dataSource: <span class="keyword">new</span> ListView.DataSource(&#123;</span><br><span class="line">        			rowHasChanged: <span class="function">(<span class="params">row1, row2</span>) =&gt;</span> row1 !== row2,</span><br><span class="line">      			&#125;).cloneWithRows(genData(<span class="number">0</span>,action.List.length)) </span><br><span class="line">            &#125;</span><br><span class="line">    	<span class="keyword">default</span>: </span><br><span class="line">    		<span class="keyword">return</span> state</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到这这里第一页10条数据的dataSource 就已经处理好了，只要按着antd-mobile文档中的demo把ListView中到row等其他属性补充完整第一页的10条数据就渲染出来了。<strong>解析：</strong> <strong><em>这里每次dispatch</em></strong> <strong><code>getList</code></strong> <strong><em>这个action是都会新建一个ListView.DataSource对象是因为该页面有新建的操作，新建完成后可以无刷新，重新让getList执行就能获取新建后的第一页的数据。而如果直接在初始化的dataSource上<code>cloneWithRow</code>数据则会导致不刷新页面无法回到第一页的情况，新建完数据后如果想不刷新页面直接调用<code>getList</code>则是在之前的已经加载的数据上重新加载第一页的数据。</em> </strong>  <strong><em><code>cloneWithRows</code>中的num_rows参数用List的长度，<code>antd-mobile</code>中的demo中用每页的条数做这个参数是为了展示无限的长列表，在实际项目中可能需要做改动</em></strong> </p>
+<p>第一页的数据已经加载完成了，接下来处理拉到底部时触发请求下一页，把下一页的数据添加到之前的List中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> getNextList =<span class="function">(<span class="params">page</span>) =&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">async</span> (dispatch) =&gt; &#123;</span><br><span class="line">      <span class="keyword">try</span>&#123;</span><br><span class="line">          <span class="keyword">const</span> NextList = <span class="keyword">await</span> fetch(<span class="string">`ape?page=<span class="subst">$&#123;page+<span class="number">1</span>&#125;</span>`</span>);</span><br><span class="line">          dispatch(setDataSource(NextList));</span><br><span class="line">      &#125;<span class="keyword">catch</span>(error)&#123;</span><br><span class="line">          </span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> setDataSource = <span class="function">(<span class="params">nextList</span>) =&gt;</span> (&#123;</span><br><span class="line">    type: <span class="string">'SETDATASOURCE'</span>,</span><br><span class="line">    nextList</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> reducer = <span class="function">(<span class="params">state = initState,action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span>(action.type)&#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'INITDATASOURCE'</span>:</span><br><span class="line">            <span class="keyword">return</span> &#123;</span><br><span class="line">                ...state,</span><br><span class="line">                List: action.List,</span><br><span class="line">              	dataSource: <span class="keyword">new</span> ListView.DataSource(&#123;</span><br><span class="line">        			rowHasChanged: <span class="function">(<span class="params">row1, row2</span>) =&gt;</span> row1 !== row2,</span><br><span class="line">      			&#125;).cloneWithRows(genData(<span class="number">0</span>,action.List.length)) </span><br><span class="line">            &#125;</span><br><span class="line">    	<span class="keyword">case</span> <span class="string">'SETDATASOURCE'</span>:</span><br><span class="line">            <span class="keyword">return</span> &#123;</span><br><span class="line">				...state,</span><br><span class="line">          		 List: [...action.nextList,...state.List],</span><br><span class="line">                 dataSource:state.dataSource.cloneWithRows(genData(page +<span class="number">1</span>,[...action.nextList,...state.List]))</span><br><span class="line">            &#125;</span><br><span class="line">    	<span class="keyword">default</span>: </span><br><span class="line">    		<span class="keyword">return</span> state</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>把下一页的数据存储到state的List中保持每一次下拉刷新和第一页的数据不丢失。然后把下一页的数据和之前state中的List合并后，用<code>clonWithRows</code>方法把合并后的数据填充到dataSource中。<em>本文主要记录本人结合redux使用antd-mobile 的ListView组建的一个demo，对redux和ListView组建不做过多阐述，由于工作繁忙对ListView.DataSource没有做更深入的了解，主要以解决问题为主，后期有时间会跟进</em> 。</p>
+<h5 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h5><p>本例的关键在于对Redux &amp; ListView.DataSource的了解，以及对antd-mobile中的demo的理解。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#react" >
+    <span class="tag-code">react</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/05/11/test/">
+        <span class="nav-arrow">← </span>
+        
+          test
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#总结："><span class="toc-nav-text">总结：</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://yoursite.com/2018/05/11/antdMobileListView/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "cuobiezi";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "antdMobile长列表结合redux做上拉加载",
+        owner: "cuobiezi",
+        repo: "cuobiezi.github.io",
+        oauth: {
+          client_id: "",
+          client_secret: ""
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
