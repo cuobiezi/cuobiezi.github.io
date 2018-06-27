@@ -603,6 +603,11 @@ h2.article-head {
   margin: 20px auto;
   cursor: zoom-in;
 }
+.markdown-content .github-emoji,
+.article-summary .github-emoji {
+  display: inline;
+  margin: 0;
+}
 .markdown-content figure,
 .article-summary figure {
   background: #f8f8f8;

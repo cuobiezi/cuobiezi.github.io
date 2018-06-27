@@ -10,7 +10,7 @@
   
   <title>
     
-      未重视react更新状态只会重新执行render函数引发的问题。 | 错别字
+      个人简历 | 错别字
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,8 +138,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>未重视react更新状态只会重新执行render函数引发的问题。</h2>
-  <p class="post-date">2018-05-24</p>
+  <h2>个人简历</h2>
+  <p class="post-date">2018-06-28</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -147,23 +147,62 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h4 id="前因后果："><a href="#前因后果：" class="headerlink" title="前因后果："></a>前因后果：</h4><p>​    无论是pc，还是mobile 基本都能看到轮播图的身影。在之前的一个用react 做的移动端的项目中用antd-mobile的走马灯做了轮播图，遇到一个切换轮播图时会导致滚动条上下滑动的问题。解决这个问题的基本思路是给走马灯再包一层 <strong>类名</strong> 为 <strong>c-box</strong> 的dom，利用事件捕获给<strong>c-box</strong>绑定touch事件，当左右滑动的距离与上下滑动的比值小于一定值 <strong>x</strong> 时就禁止掉浏览器的默认事件 <em>我的<strong>x</strong>值为0.3</em>。</p>
-<p>​    轮播图的问题解决后，又出现了页面缓存的问题，由于spa 是无刷新的，当我点进商品详情页的时候，在请求当前商品的接口完成之前，会一直展示上一个产品的信息。这个问题很好解决，在请求完成之前让页面render  加载组件，当请求完成后再把产品详情页渲染出来。</p>
-<p>​    <strong>有时候bug真的是改不完</strong>，解决完页面缓存的问题后，之前解决的轮播图的问题又回来了。因为在解决这个两个bug的中间有修改过该页面的样式 ，来回折腾后发现之前在<code>componentDidMount</code>(<em>直接用onTouchStart把事件绑定在dom上无法禁止默认事件</em>)里面绑定的touch事件根本就不能触发，那这么说就是样式的问题咯？找了好久实在找不到原因，走头无路的我只能重新照抄一步一步找出原因。终于发现，如果一直让该dom加载，<code>componentDidMount</code>函数就能给dom绑定touch事件，而在请求数据完成前先渲染加载组件，等请求完成后再渲染页面的话，在<code>componentDidMount</code>中就无法给dom绑定touch事件（<em>虽然能找到该dom，但无法给该dom绑定任何事件</em>）。</p>
-<p>​    问题的原因找到了当然就好解决了，让该页面已打开就渲染，而不是只渲染加载组件，在数据请求完成之前让加载组件把页面内容挡住，等数据请求完成0.5秒后（<em>拿到数据后重新render需要时间,优化用户体验</em>）后把加载按钮拿掉。</p>
-<p>​    </p>
-<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>​    在react中当触发upLoad 时只会重新执行render函数，其他的生命周期是不会重新执行的，这一点我在《深入浅出的Reac&amp;Redux》中读到过。仔细想一下，这也是非常符合react <code>view=render(state)</code> 的设计理念的，改变了state的目的基本上就是为了去改变view。就好像你的老板要你在明天上班的时候打印100张设计稿中客户选中的那一张给客户，到底是哪一张你现在无法确定。为了保证能立即打印出客户选中的设计稿（<em>客户有可能改变在打印后要求重新打印另外的设计稿</em>），你必须在明天上班前，准备好这100张设计稿，检查打印机，打开设计稿等一系列准备工作。当客户做出选择后你只需按下打印就能把对应的稿子打印出来，最大可能的减少打印成本以及客户的等待时间。<code>render</code>函数就是打印这一操作，这100张稿子就是react中的state是不确定的，这一系列的准备工作就是react除<code>render</code>之外的生命周期，必须在确定state之前全部完成，保证state确定后不需要重复执行，这样才能尽可能的提高性能。细思以后，更新state当然只能重新执行<code>render</code>函数；</p>
+    <section class="markdown-content"><h2 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">姓名</th>
+<th style="text-align:center">性别</th>
+<th style="text-align:center">经验</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">刘建文</td>
+<td style="text-align:center">男</td>
+<td style="text-align:center">3年</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">手机</th>
+<th style="text-align:center">邮箱</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><a href="tel:17620387800" target="_blank" rel="noopener">17620387800</a></td>
+<td style="text-align:center"><a href="mailto:like.nanhai@gmail.com" target="_blank" rel="noopener">like.nanhai@gmail.com</a></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">学历</th>
+<th style="text-align:center">专业</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">全日制统招本科</td>
+<td style="text-align:center">电子信息工程</td>
+</tr>
+</tbody>
+</table>
+<h2 id="求职意向"><a href="#求职意向" class="headerlink" title="求职意向"></a>求职意向</h2><ul>
+<li>全职</li>
+<li>web前端工程师</li>
+<li>交接状态，一周内可上岗</li>
+</ul>
+<h2 id="专业技能"><a href="#专业技能" class="headerlink" title="专业技能"></a>专业技能</h2><ul>
+<li>熟练掌握html5开发技术，熟悉web标准；</li>
+<li>熟练掌握原生javascript；</li>
+<li>熟练掌握AJAX异步通信技术，会使用原始jsonp方式及CORS（跨源资源共享）解决AJAX跨域问题。以及网页数据更新问题。</li>
+</ul>
 </section>
     <!-- Tags START -->
-    
-      <div class="tags">
-        <span>Tags:</span>
-        
-  <a href="/tags#问题" >
-    <span class="tag-code">问题</span>
-  </a>
-
-      </div>
     
     <!-- Tags END -->
     <!-- NAV START -->
@@ -171,20 +210,13 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2018/05/24/chip/">
+      <a class="nav-left" href="/2018/05/31/githubEmoji/">
         <span class="nav-arrow">← </span>
         
-          有用但容易被忽视的小碎片；
+          githubEmoji 全部表情列表
         
       </a>
     
-    
-      <a class="nav-right" href="/2018/05/29/design/">
-        
-          前端SPA提高工作效率的一些设计思路
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -230,7 +262,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#前因后果："><span class="toc-nav-text">前因后果：</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#总结："><span class="toc-nav-text">总结：</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#基本信息"><span class="toc-nav-text">基本信息</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#求职意向"><span class="toc-nav-text">求职意向</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#专业技能"><span class="toc-nav-text">专业技能</span></a></li></ol>
     
   </div>
 </aside>
@@ -240,7 +272,7 @@
 
 <script>
   (function () {
-    var url = 'http://yoursite.com/2018/05/24/problem/';
+    var url = 'http://yoursite.com/2018/06/28/resume/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -296,7 +328,7 @@
     var gitmentConfig = "cuobiezi";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "未重视react更新状态只会重新执行render函数引发的问题。",
+        id: "个人简历",
         owner: "cuobiezi",
         repo: "cuobiezi.github.io",
         oauth: {

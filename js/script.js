@@ -7,7 +7,25 @@
   var top = $('.scroll-top')
   var catalog = $('.catalog-container .toc-main')
   var isOpen = false
-
+  //  做github meoji 列表
+  var markdownContent = app.children('.post-article').length > 0 ?  app.children('.post-article').children('.markdown-content')[0].innerText : ''
+  if(markdownContent.indexOf('this blog is github emoji list') === 0){
+    $.ajax({
+      type:'get',
+      url: 'https://api.github.com/emojis',
+      success: function(data) {
+        var newContent = '';
+        for (const key in data) {
+          if (data.hasOwnProperty(key)) {
+            console.log(key,data[key])
+            newContent += "<div style='float:left;text-align:center;padding:0 12px'><div>:"+key+":</div> <img class='github-emoji' width='60px' alt='aa' title='"+key+"' src='" + data[key] + "'/></div>"
+          }
+        }
+        app.children('.post-article').children('.markdown-content')[0].innerHTML = newContent
+      },
+      fail: function(){}
+    })
+  }
   $(document).ready(function () {
     NProgress.start()
     $('#nprogress .bar').css({
@@ -21,7 +39,8 @@
     }
     if (banner) {
       app.css('transition-delay', '0.15s')
-      $('#article-banner').children().css(fade)
+      $('#article-banner').children().css(fade);
+      
     }
     if (about) {
       $('.author').children().css(fade)

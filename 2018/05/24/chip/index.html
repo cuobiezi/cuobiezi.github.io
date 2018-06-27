@@ -147,8 +147,51 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><h3 id="页面跳转滚动条置顶；"><a href="#页面跳转滚动条置顶；" class="headerlink" title="页面跳转滚动条置顶；"></a>页面跳转滚动条置顶；</h3><p>​    一个很简单但是在开发时候容易被忽视的问题。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.scrollTo(<span class="number">0</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>​    与其在写完之后在加上，不如记住离开长列表等设计到滚动条的页面时，都加上这一句。</p>
+<hr>
+<h3 id="popstate事件"><a href="#popstate事件" class="headerlink" title="popstate事件"></a>popstate事件</h3><p>​    popstate 监听浏览器上返回、前进、刷新按钮。</p>
+<pre><code class="js"><span class="built_in">window</span>.addEventLister(<span class="string">'popstate'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>{
+
+})
+</code></pre>
+<p>在以前没做spa的时候少用到这个方法，也没有认证的研究过。在做单页面应用的时候menu菜单的亮总是不完美，这个事件就刚好能满足需求</p>
+<hr>
+<h3 id="hash路由和浏览器路由的选择"><a href="#hash路由和浏览器路由的选择" class="headerlink" title="hash路由和浏览器路由的选择"></a>hash路由和浏览器路由的选择</h3><p>浏览器路由和hash路由是有区别的，浏览器路由顾明思意就是以前后台服务器配置的那种路由，<code>/路由名</code>。hash路由则是和完全不同的一种路由，是用锚点实现的一种路由，所以它的性质就基本和锚点的性质差不多 （<strong>我在做前端路由的时候一般都会选择hash路由，尤其是在做微信公众号时，如果用浏览器路由会出现路径问题，</strong> <strong><em>具体什么问题就记不清了</em></strong>）。</p>
+<hr>
+<h3 id="fetch请求需要牢记的两点"><a href="#fetch请求需要牢记的两点" class="headerlink" title="fetch请求需要牢记的两点"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API/Using_Fetch" target="_blank" rel="noopener">fetch</a>请求需要牢记的两点</h3><ul>
+<li><p>请求返回一个Promise对象  </p>
+<blockquote>
+<p>当接收到一个代表错误的 HTTP 状态码时，从 fetch()返回的 Promise 不会被标记为 reject， 即使该 HTTP 响应的状态码是 404 或 500。相反，它会将 Promise 状态标记为 resolve （但是会将 resolve 的返回值的 ok 属性设置为 false ），仅当网络故障时或请求被阻止时，才会标记为 reject</p>
+</blockquote>
+</li>
+<li><blockquote>
+<p>默认情况下，fetch 不会从服务端发送或接收任何 cookies, 如果站点依赖于用户 session，则会导致未经认证的请求（要发送 cookies，必须设置 credentials 选项）。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="SPA中的页面跳转的传参"><a href="#SPA中的页面跳转的传参" class="headerlink" title="SPA中的页面跳转的传参"></a>SPA中的页面跳转的传参</h3><h4 id="在一个大型项目中会有很多页面跳转，我们暂且把页面跳转简单的分为两种："><a href="#在一个大型项目中会有很多页面跳转，我们暂且把页面跳转简单的分为两种：" class="headerlink" title="在一个大型项目中会有很多页面跳转，我们暂且把页面跳转简单的分为两种："></a>在一个大型项目中会有很多页面跳转，我们暂且把页面跳转简单的分为两种：</h4><ol>
+<li>无返回状态的跳转：<br>像产品的详情、订单详情、订单列表等这类页面，返回上一页不需要当前页面的参数。只需要执行，<code>window.history.go(-1)</code></li>
+<li>有返回状态跳转：<br>像地址列表，新建地址等页面，产品为了提高用户体验，一般要求选择完地址后返回上一页的时候要带有选中的地址信息（当然你也可以把选择订单的页面单独拿出来做），以及从下单页面选择地址时进入地址列表为空时，需要直接进入新建地址页面，新建地址完成后也要直接返回下单页面。这里的地址列表（假如选择地址和地址列表为一个页面）和新建地址页面操作完成后需要带着当前页面的信息返回。  </li>
+</ol>
+<h4 id="页面跳转到下一页传参也有两种方法："><a href="#页面跳转到下一页传参也有两种方法：" class="headerlink" title="页面跳转到下一页传参也有两种方法："></a>页面跳转到下一页传参也有两种方法：</h4><ol>
+<li>通过框架的状态管理机制传参：<br>这种方法操作相对简单，无需配置路由，直接把要传的参数存储在状态里面。因为状态会随着页面的刷新状态就会变成初始化状态，所以如果当前页面的内容依赖上一个页面的状态的时候，刷新当前页面这个状态就会变成初始值，页面分享的时候甚至可能找不到这个状态。<strong>这种页面之间的交互是不牢固的，我一般不会使用这种不靠谱的方式</strong></li>
+<li>通过路由传参：<br>通过路由传参的方式可能相对于上一种方式要稍微复杂一点，他需要去配置对应的路由。但是通过路由传参跳转页面，参数是存储在url中的，也就不会出现通过状态传递参数的方式的种种问题。</li>
+</ol>
+<h4 id="参数回传："><a href="#参数回传：" class="headerlink" title="参数回传："></a>参数回传：</h4><p>  有返回状态页面跳转除了要把前一个页面的参数原封不动的还给他，还要当前页面的处理结果也传递给前一个页面。<br>  假如我的<code>立即下单</code>页的路径是 <code>#/createOrder/01234</code> (<em>默认使用路由传参，01234为商品id</em>)，在立即下单页面需要选择地址，<code>选择地址</code>页的路径是<code>#/address/chance</code>(<em>假如选择地址和地址列表为同一个页面，chance用来标记当前页是选择地址页</em>)。如果<code>#/createOrder</code>页面<code>#/address</code>页面传回来的地址那也就是我们上文所说的无返回状态的页面跳转，直接使用<code>window.history.go(-1)</code>直接返回就可以了，上一个页面的路径不会发生任何改变。这里其实又可以分为两种情况，这里我们只考虑最复杂的那种情况，就是<code>#/createOrder</code>页面也是依赖<code>#/address</code>页的状态的，也就是说产品需要，当<code>#/address</code>页面一旦做出了选择，<code>#/createOrder</code>页面就要记住这个选择，不管是刷新还是分享都要记住。使用<code>window.history.go(-1)</code>就无法把<code>#/address</code>页面做出的选择传递到<code>#/createOrder</code>页面中去。解决这个问题我就直接把<code>#/createOrder</code>页面中的参数也传递到<code>#/address</code>页面中去，选择完地址后再原封不动的把参数返回，如果一个<code>#/createOrder</code>页面的的参数有很多，我们要尽量避免给<code>#/address</code>页面添加太多的参数，我们只需给<code>#/address</code>页面url添加一个参数字段（<em>beforeParams</em>），然后把从上一个页面那个过来的参数转换成字符串，存在<em>beforeParams</em>这个字段里面，解析的时候在把这个字符串传换成对象，通过<code>window.location.href</code>跳转回上一个页面。</p>
+<hr>
+</section>
     <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#杂七杂八" >
+    <span class="tag-code">杂七杂八</span>
+  </a>
+
+      </div>
     
     <!-- Tags END -->
     <!-- NAV START -->
@@ -215,7 +258,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="nav">none</ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#页面跳转滚动条置顶；"><span class="toc-nav-text">页面跳转滚动条置顶；</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#popstate事件"><span class="toc-nav-text">popstate事件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#hash路由和浏览器路由的选择"><span class="toc-nav-text">hash路由和浏览器路由的选择</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#fetch请求需要牢记的两点"><span class="toc-nav-text">fetch请求需要牢记的两点</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#SPA中的页面跳转的传参"><span class="toc-nav-text">SPA中的页面跳转的传参</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#在一个大型项目中会有很多页面跳转，我们暂且把页面跳转简单的分为两种："><span class="toc-nav-text">在一个大型项目中会有很多页面跳转，我们暂且把页面跳转简单的分为两种：</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#页面跳转到下一页传参也有两种方法："><span class="toc-nav-text">页面跳转到下一页传参也有两种方法：</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#参数回传："><span class="toc-nav-text">参数回传：</span></a></li></ol></li></ol>
     
   </div>
 </aside>
