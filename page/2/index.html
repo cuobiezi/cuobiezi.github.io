@@ -65,7 +65,7 @@
       
         <li class="list-item">
           
-            <a href="/" class="item-link">Home</a>
+            <a href="/" class="item-link active">Home</a>
           
         </li>
       
@@ -104,7 +104,7 @@
         
           <li class="menu-item">
             
-              <a href="/" class="menu-link">Home</a>
+              <a href="/" class="menu-link mobile-active">Home</a>
             
           </li>
         
@@ -137,88 +137,43 @@
   </div>
 </header>
 
-    <div id="article-banner">
-  <h2>Archives</h2>
-  <p class="post-date">文章归档</p>
+    <main class="app-body">
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/05/11/antdMobileListView/">antdMobile长列表结合redux做上拉加载</a>
+      </h2>
+      <p class="article-date">May 11, 2018</p>
+      
+        
+  <a href="/tags#react" >
+    <span class="tag-code">react</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          刚看完朋友介绍的《深入浅出的react》就接到一个微信商城的项目。有一个下拉加载的页面，而antd-mobile ListView中的demo却没有结合redux。折腾了大概一个下午的时间，可算是把两者结合在一起了。
+首先，我的项目中基本上所有的请求都是放在redux中的用redux-thu ...
+        
+      </div>
+      <a class="more" href="/2018/05/11/antdMobileListView/">Read more</a>
+    </article>
+  
+
+  
+    <div class="guide-pager">
+  
+    <a href="/"><span class="page-arrow">← </span>Prev</a>
+  
+  
+    <a class="unvisible" href="/">Next <span class="page-arrow">→</span></a>
+  
 </div>
-<main class="app-body" id="archives">
-  
-  
-  
-    <section class="time-section">
-  <h1 class="section-year">
-    2018
-  </h1>
-  <div class="section-list">
-    
-    
-      <div class="section-list-item">
-        <a href="/2018/08/20/recruitement/" class="archive-title">招聘要求</a>
-        <p class="archive-date">08-20</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/08/16/yanwoImage/" class="archive-title">七牛云图片存储操作指南</a>
-        <p class="archive-date">08-16</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/08/14/wangzong-md/" class="archive-title">燕子计划</a>
-        <p class="archive-date">08-14</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/06/28/resume/" class="archive-title">个人简历</a>
-        <p class="archive-date">06-28</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/06/01/boke-mini-readme/" class="archive-title">boke-mini-readme</a>
-        <p class="archive-date">06-01</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/05/31/githubEmoji/" class="archive-title">githubEmoji 全部表情列表</a>
-        <p class="archive-date">05-31</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/05/29/design/" class="archive-title">前端SPA提高工作效率的一些设计思路</a>
-        <p class="archive-date">05-29</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/05/24/problem/" class="archive-title">未重视react更新状态只会重新执行render函数引发的问题。</a>
-        <p class="archive-date">05-24</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/05/24/chip/" class="archive-title">有用但容易被忽视的小碎片；</a>
-        <p class="archive-date">05-24</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/05/20/goback/" class="archive-title">HTML5</a>
-        <p class="archive-date">05-20</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/05/11/antdMobileListView/" class="archive-title">antdMobile长列表结合redux做上拉加载</a>
-        <p class="archive-date">05-11</p>
-      </div>
-    
-  </div>
-</section>
   
 </main>
 
-<script>
-  (function () {
-    var url = 'http://yoursite.com/tags/杂七杂八/index.html';
-    $('#article-banner').geopattern(url);
-    $('.header').removeClass('fixed-header');
-  })();
-</script>
+
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>
